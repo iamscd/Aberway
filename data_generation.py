@@ -1,9 +1,16 @@
 import csv
-import json
+import math
 
-with open("cost_matix.csv", "r", newline="") as csvfile:
-    csv_reader = csv.reader(csvfile)
-    data = [row for row in csv_reader]
+
+def euclidean_distance_2d(point1, point2):
+    x1, y1 = point1
+    x2, y2 = point2
+
+    # Calculate the Euclidean distance
+    distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+
+    return distance
+
 
 nodeList = [
     [[1288, 634], 8, [50, 50, 255], [1, 2, 3, 4], 0],
@@ -68,20 +75,24 @@ nodeList = [
     [[1336, 1395], 8, [50, 50, 255], [53], 59],
     [[1561, 1433], 8, [50, 50, 255], [52], 60],
 ]
-connected_list = []
+node_list = []
 for node in nodeList:
     x_y = node[0]
     id = node[-1]
     connected_to = node[-2]
-    connected_list.append(connected_to)
-graph = {}
+    node_list.append([id, x_y, connected_to])
 
-for id, connectivity in enumerate(connected_list):
-    c_list = []
-    for connected_to in connectivity:
-        data_tuple = (str(connected_to), data[id][connected_to])
-        c_list.append(data_tuple)
-    graph[str(id)] = c_list
-print(graph)
-with open("cost_graph.txt", "w") as file:
-    file.write(json.dumps(graph))  # use `json.loads` to do the reverse
+
+cost_matrix = []
+for node1 in node_list:
+    cost_for_node1 = []
+    for node2 in node_list:
+        if node1[0] in node2[-1]:  # check if connected to
+            cost_for_node1.append(euclidean_distance_2d(node1[1], node2[1]))
+        else:
+            cost_for_node1.append(-1)
+    cost_matrix.append(cost_for_node1)
+
+with open("cost_matix.csv", "w", newline="") as csvfile:
+    csv_writer = csv.writer(csvfile)
+    csv_writer.writerows(cost_matrix)
