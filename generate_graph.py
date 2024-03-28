@@ -1,7 +1,7 @@
 import csv
 import json
 
-with open("cost_matix.csv", "r", newline="") as csvfile:
+with open("cost_matrix.csv", "r", newline="") as csvfile:
     csv_reader = csv.reader(csvfile)
     data = [row for row in csv_reader]
 
